@@ -1,0 +1,2 @@
+# Database Storage Directory
+# Holds the local SQLite database file (e.g. abuse_reporting.db).

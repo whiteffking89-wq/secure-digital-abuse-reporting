@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Report Digital Abuse Incident - Safety Portal{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <div class="card-header">
+        <h2>Submit an Incident Report</h2>
+        <p>Provide accurate details to assist investigation. All information and evidence are kept confidential.</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('citizen.report_page') }}" enctype="multipart/form-data">
+        <input type="hidden" name="browser_submit" value="1">
+
+        <div class="form-group">
+            <label for="title" class="form-label">Incident Title *</label>
+            <input type="text" id="title" name="title" class="form-control" placeholder="e.g. Threatening messages and impersonation on Instagram" required value="{{ request.form.get('title', '') }}">
+            <div class="form-text">A concise summary of the abuse experienced (3 to 200 characters).</div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="category_id" class="form-label">Abuse Category *</label>
+                <select id="category_id" name="category_id" class="form-control" required>
+                    <option value="">-- Select a Category --</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if request.form.get('category_id')|string == cat.id|string %}selected{% endif %}>
+                            {{ cat.category_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="incident_platform" class="form-label">Digital Platform / Channel *</label>
+                <select id="incident_platform" name="incident_platform" class="form-control" required>
+                    <option value="">-- Select Platform --</option>
+                    <option value="Instagram" {% if request.form.get('incident_platform') == 'Instagram' %}selected{% endif %}>Instagram</option>
+                    <option value="WhatsApp" {% if request.form.get('incident_platform') == 'WhatsApp' %}selected{% endif %}>WhatsApp</option>
+                    <option value="Telegram" {% if request.form.get('incident_platform') == 'Telegram' %}selected{% endif %}>Telegram</option>
+                    <option value="Twitter/X" {% if request.form.get('incident_platform') == 'Twitter/X' %}selected{% endif %}>Twitter / X</option>
+                    <option value="Facebook" {% if request.form.get('incident_platform') == 'Facebook' %}selected{% endif %}>Facebook</option>
+                    <option value="Discord" {% if request.form.get('incident_platform') == 'Discord' %}selected{% endif %}>Discord</option>
+                    <option value="Email" {% if request.form.get('incident_platform') == 'Email' %}selected{% endif %}>Email</option>
+                    <option value="Other" {% if request.form.get('incident_platform') == 'Other' %}selected{% endif %}>Other Platform</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="incident_date" class="form-label">Incident Date *</label>
+            <input type="date" id="incident_date" name="incident_date" class="form-control" max="{{ today_str }}" required value="{{ request.form.get('incident_date', today_str) }}">
+            <div class="form-text">When did the incident occur or start? Cannot be a future date.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="description" class="form-label">Detailed Description of Abuse *</label>
+            <textarea id="description" name="description" class="form-control" rows="6" placeholder="Describe the incident in detail: what happened, usernames involved, nature of threats or harassment..." required minlength="10">{{ request.form.get('description', '') }}</textarea>
+            <div class="form-text">Minimum 10 characters. Include any relevant usernames or URLs if known.</div>
+        </div>
+
+        <div class="form-group" style="background: #f8fafc; padding: 1.25rem; border-radius: var(--radius-md); border: 1px dashed var(--border-color);">
+            <label for="evidence" class="form-label">Upload Evidence Files (Optional)</label>
+            <input type="file" id="evidence" name="evidence" class="form-control" multiple accept=".png,.jpg,.jpeg,.pdf,.mp4,.txt">
+            <div class="form-text" style="margin-top: 0.5rem; line-height: 1.5;">
+                📎 <strong>Accepted Formats:</strong> PNG, JPG, JPEG, PDF, MP4, TXT (up to 16 MB each).<br>
+                🔒 <strong>Security Guarantee:</strong> Evidence is encrypted and isolated outside public web directories. Only you and authorized investigators have access.
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+            <button type="submit" class="btn btn-primary" style="flex: 2;">Submit Incident Report</button>
+            <a href="{{ url_for('citizen.index') }}" class="btn btn-outline" style="flex: 1; text-align: center;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

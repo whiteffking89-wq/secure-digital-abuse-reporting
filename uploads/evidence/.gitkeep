@@ -1,0 +1,4 @@
+# SECURE UPLOAD DIRECTORY
+# Files here are strictly kept OUTSIDE the public web root (app/static/).
+# Never expose this folder via static web routes.
+# Files should only be served via authenticated, authorized Flask streaming routes.

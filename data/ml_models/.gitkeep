@@ -1,0 +1,2 @@
+# Machine Learning Models Directory
+# Holds trained Scikit-learn models (joblib/pickle) and sample training datasets.

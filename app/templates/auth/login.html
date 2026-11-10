@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In - Secure Digital Abuse Reporting Platform{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="card">
+        <div class="card-header" style="text-align: center;">
+            <h2>Sign In to Your Account</h2>
+            <p>Access your reported cases and track live investigation progress.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.login_page') }}">
+            <input type="hidden" name="browser_submit" value="1">
+            {% if request.args.get('next') %}
+                <input type="hidden" name="next" value="{{ request.args.get('next') }}">
+            {% endif %}
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="name@example.com" required autofocus value="{{ request.form.get('email', '') }}">
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Sign In</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.9rem;">
+            Don't have an account yet? 
+            <a href="{{ url_for('auth.register_page') }}" style="color: var(--primary-color); font-weight: 600;">Register here</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

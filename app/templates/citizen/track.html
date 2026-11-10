@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Track Complaint Status - Secure Digital Abuse Reporting{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto 2rem;">
+    <div class="card-header">
+        <h2>Complaint Status Tracker</h2>
+        <p>Enter your unique complaint reference code to check the live status of your case.</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('citizen.track_search_submit') }}" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <input type="text" name="report_number" class="form-control" placeholder="e.g. REP-2026-F9A8C2B1" required style="flex: 1; font-family: monospace; text-transform: uppercase;" value="{{ searched_number or '' }}">
+        <button type="submit" class="btn btn-primary">Track Status</button>
+    </form>
+</div>
+
+{% if report %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+    <div class="tracking-header">
+        <div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">COMPLAINT REFERENCE</div>
+            <div class="tracking-code">{{ report.report_number }}</div>
+        </div>
+
+        <div>
+            {% if report.status == 'Pending' %}
+                <span class="badge badge-pending" style="font-size: 0.95rem; padding: 0.4rem 1rem;">Status: Pending</span>
+            {% elif report.status == 'Under Review' %}
+                <span class="badge badge-review" style="font-size: 0.95rem; padding: 0.4rem 1rem;">Status: Under Review</span>
+            {% elif report.status == 'Resolved' %}
+                <span class="badge badge-resolved" style="font-size: 0.95rem; padding: 0.4rem 1rem;">Status: Resolved</span>
+            {% elif report.status == 'Rejected' %}
+                <span class="badge badge-rejected" style="font-size: 0.95rem; padding: 0.4rem 1rem;">Status: Rejected</span>
+            {% else %}
+                <span class="badge" style="font-size: 0.95rem; padding: 0.4rem 1rem;">Status: {{ report.status }}</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div>
+        <div class="detail-row">
+            <div class="detail-label">Abuse Category</div>
+            <div class="detail-value"><strong>{{ report.category.category_name if report.category else 'General' }}</strong></div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Digital Platform</div>
+            <div class="detail-value">{{ report.incident_platform }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Incident Date</div>
+            <div class="detail-value">{{ report.incident_date.strftime('%Y-%m-%d') if report.incident_date else '-' }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Submitted On</div>
+            <div class="detail-value">{{ report.created_at.strftime('%Y-%m-%d %H:%M UTC') if report.created_at else '-' }}</div>
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Last Updated</div>
+            <div class="detail-value">{{ report.updated_at.strftime('%Y-%m-%d %H:%M UTC') if report.updated_at else '-' }}</div>
+        </div>
+
+        {% if is_owner or is_admin %}
+            <div class="detail-row" style="flex-direction: column;">
+                <div class="detail-label" style="margin-bottom: 0.5rem;">Incident Description</div>
+                <div class="detail-value" style="background: #f8fafc; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); white-space: pre-wrap;">{{ report.description }}</div>
+            </div>
+
+            <div class="detail-row" style="flex-direction: column; border-bottom: none;">
+                <div class="detail-label" style="margin-bottom: 0.5rem;">Uploaded Evidence Proof</div>
+                <div class="detail-value">
+                    {% set evidence_list = report.evidence_files.all() %}
+                    {% if evidence_list and evidence_list|length > 0 %}
+                        <ul style="list-style: none;">
+                            {% for ev in evidence_list %}
+                                <li style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); margin-bottom: 0.5rem;">
+                                    <div>
+                                        <strong>📎 {{ ev.original_filename }}</strong>
+                                        <div style="font-size: 0.8rem; color: var(--text-muted);">Format: {{ ev.file_type }} &bull; Stored securely outside public web root</div>
+                                    </div>
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <a href="{{ url_for('evidence.view_evidence', file_id=ev.id) }}" target="_blank" class="btn btn-outline btn-sm">View File</a>
+                                        <a href="{{ url_for('evidence.view_evidence', file_id=ev.id, download=1) }}" class="btn btn-secondary btn-sm">Download</a>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">No evidence files attached to this report.</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div style="margin-top: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: var(--radius-md); border-left: 4px solid var(--primary-color); font-size: 0.9rem; color: var(--text-muted);">
+                ℹ️ <strong>Privacy Protection Notice:</strong> You are viewing a public status verification. Incident descriptions and sensitive evidence documents are protected and only accessible to the authenticated complaint owner and assigned reviewers.
+                {% if not session.get('user_id') %}
+                    <br><a href="{{ url_for('auth.login', next=url_for('citizen.track_page', report_number=report.report_number)) }}" style="color: var(--primary-color); font-weight: 600;">Sign in to your account</a> if this report belongs to you.
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

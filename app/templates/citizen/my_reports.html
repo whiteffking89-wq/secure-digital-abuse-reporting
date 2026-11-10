@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}My Reports - Secure Digital Abuse Reporting Platform{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h2>My Submitted Reports</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
+                Review the current status and investigation progress of your filed incidents.
+            </p>
+        </div>
+        <a href="{{ url_for('citizen.report_page') }}" class="btn btn-primary">+ File New Report</a>
+    </div>
+
+    {% if reports and reports|length > 0 %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Reference ID</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Platform</th>
+                        <th>Incident Date</th>
+                        <th>Evidence</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                        <tr>
+                            <td>
+                                <strong style="font-family: monospace; color: var(--primary-color);">{{ report.report_number }}</strong>
+                            </td>
+                            <td>{{ report.title }}</td>
+                            <td>{{ report.category.category_name if report.category else 'General' }}</td>
+                            <td>{{ report.incident_platform }}</td>
+                            <td>{{ report.incident_date.strftime('%Y-%m-%d') if report.incident_date else '-' }}</td>
+                            <td>
+                                {% set ev_count = report.evidence_files.count() %}
+                                {% if ev_count > 0 %}
+                                    <span style="font-weight: 600; color: var(--secondary-color);">📎 {{ ev_count }} file(s)</span>
+                                {% else %}
+                                    <span style="color: var(--text-muted); font-size: 0.85rem;">None</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if report.status == 'Pending' %}
+                                    <span class="badge badge-pending">Pending</span>
+                                {% elif report.status == 'Under Review' %}
+                                    <span class="badge badge-review">Under Review</span>
+                                {% elif report.status == 'Resolved' %}
+                                    <span class="badge badge-resolved">Resolved</span>
+                                {% elif report.status == 'Rejected' %}
+                                    <span class="badge badge-rejected">Rejected</span>
+                                {% else %}
+                                    <span class="badge">{{ report.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('citizen.track_page', report_number=report.report_number) }}" class="btn btn-outline btn-sm">Track</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 3rem 1rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+            <h3>No reports filed yet</h3>
+            <p style="color: var(--text-muted); max-width: 500px; margin: 0.5rem auto 1.5rem;">
+                You haven't submitted any abuse complaints. If you or someone you know is experiencing digital abuse, you can file a confidential report now.
+            </p>
+            <a href="{{ url_for('citizen.report_page') }}" class="btn btn-primary">File an Incident Report</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

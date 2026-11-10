@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Secure Digital Abuse Reporting Platform{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Secure Digital Abuse Reporting Platform</h1>
+    <p>
+        A safe, confidential, and encrypted reporting gateway designed to empower citizens to report
+        cyberbullying, harassment, identity theft, non-consensual imagery, and digital extortion.
+    </p>
+    <div class="hero-actions">
+        <a href="{{ url_for('citizen.report_page') }}" class="btn btn-primary">File a Report</a>
+        <a href="{{ url_for('citizen.track_search_page') }}" class="btn btn-outline">Track Existing Complaint</a>
+    </div>
+</section>
+
+<section class="features-grid">
+    <div class="feature-card">
+        <span class="feature-icon">🔒</span>
+        <h3>End-to-End Evidence Privacy</h3>
+        <p>
+            Your uploaded screenshots, chat transcripts, and files are stored strictly outside the public web root.
+            Access is restricted to authorized case reviewers and verified owners.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <span class="feature-icon">🛡️</span>
+        <h3>Standardized Categorization</h3>
+        <p>
+            Covers Cyberbullying, Online Stalking, Impersonation, Non-Consensual Image Sharing, Financial Fraud,
+            and Hate Speech with legally structured forensic fields.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <span class="feature-icon">⚡</span>
+        <h3>Live Status Tracking</h3>
+        <p>
+            Every submission generates a unique tracking code (e.g., <code>REP-2026-F9A8C2B1</code>).
+            Track investigation progress securely without exposing private details.
+        </p>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-header">
+        <h2>How the Reporting Process Works</h2>
+        <p>Simple, guided, and safe steps to submit and track your digital abuse complaint.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; text-align: center;">
+        <div style="padding: 1rem;">
+            <div style="font-size: 2rem; color: var(--primary-color); font-weight: 700; margin-bottom: 0.5rem;">1</div>
+            <h4>Sign Up / Sign In</h4>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">Create a password-protected account to manage and track your submissions.</p>
+        </div>
+
+        <div style="padding: 1rem;">
+            <div style="font-size: 2rem; color: var(--primary-color); font-weight: 700; margin-bottom: 0.5rem;">2</div>
+            <h4>Provide Details</h4>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">Specify the platform (e.g. WhatsApp, Instagram), incident date, and describe the incident.</p>
+        </div>
+
+        <div style="padding: 1rem;">
+            <div style="font-size: 2rem; color: var(--primary-color); font-weight: 700; margin-bottom: 0.5rem;">3</div>
+            <h4>Attach Evidence</h4>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">Upload screenshots or logs. Files are validated and assigned cryptographic SHA-256 hashes.</p>
+        </div>
+
+        <div style="padding: 1rem;">
+            <div style="font-size: 2rem; color: var(--primary-color); font-weight: 700; margin-bottom: 0.5rem;">4</div>
+            <h4>Track Resolution</h4>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">Receive live status updates (Pending, Under Review, Escalated, Resolved).</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
